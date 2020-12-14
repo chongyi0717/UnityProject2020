@@ -71,10 +71,10 @@ MonoBehaviour:
     image: {fileID: 2800000, guid: a63863a2af95b4774bf1392c24952242, type: 3}
     completedImage: {fileID: 2800000, guid: 386ad4dcd15bf45459f96ff08a55be45, type: 3}
   - orderInView: 10
-    heading: Make Your Own Enemy
-    text: Get the premium Customizable Boss asset you can configure in 80+ ways.
+    heading: Supercharge Your Game
+    text: Get a bundle of premium assets to build out your game.
     linkText: Asset Store
-    url: https://assetstore.unity.com/packages/3d/characters/robots/customizable-boss-fps-microgame-add-ons-162578
+    url: https://assetstore.unity.com/browse/fps-creator-bundle
     authorizedUrl: 1
     buttonText: 
     tutorial: {fileID: 0}

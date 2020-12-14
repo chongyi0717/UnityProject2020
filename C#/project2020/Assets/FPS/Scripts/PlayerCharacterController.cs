@@ -31,7 +31,7 @@ public class PlayerCharacterController : MonoBehaviour
     [Tooltip("Acceleration speed when in the air")]
     public float accelerationSpeedInAir = 25f;
     [Tooltip("Multiplicator for the sprint speed (based on grounded speed)")]
-    public float sprintSpeedModifier = 2f;
+    public float sprintSpeedModifier = 1f;
     [Tooltip("Height at which the player dies instantly when falling off the map")]
     public float killHeight = -50f;
 
@@ -69,6 +69,8 @@ public class PlayerCharacterController : MonoBehaviour
     public AudioClip landSFX;
     [Tooltip("Sound played when taking damage froma fall")]
     public AudioClip fallDamageSFX;
+    [Tooltip("Sound played when taking damage froma fall")]
+    public AudioClip HitSFX;
 
     [Header("Fall Damage")]
     [Tooltip("Whether the player will recieve damage when hitting the ground at high speed")]
@@ -84,6 +86,7 @@ public class PlayerCharacterController : MonoBehaviour
 
     public UnityAction<bool> onStanceChanged;
 
+    private Animator anim;
     public Vector3 characterVelocity { get; set; }
     public bool isGrounded { get; private set; }
     public bool hasJumpedThisFrame { get; private set; }
@@ -143,6 +146,8 @@ public class PlayerCharacterController : MonoBehaviour
         // force the crouch state to false when starting
         SetCrouchingState(false, true);
         UpdateCharacterHeight(true);
+
+        anim = GetComponent<Animator>();
     }
 
     void Update()
@@ -188,6 +193,7 @@ public class PlayerCharacterController : MonoBehaviour
         UpdateCharacterHeight(false);
 
         HandleCharacterMovement();
+        anim.SetBool("Damaged", false);
     }
 
     void OnDie()
@@ -222,6 +228,7 @@ public class PlayerCharacterController : MonoBehaviour
                     IsNormalUnderSlopeLimit(m_GroundNormal))
                 {
                     isGrounded = true;
+                    anim.SetBool("Jump", false);
 
                     // handle snapping to the ground
                     if (hit.distance > m_Controller.skinWidth)
@@ -239,6 +246,7 @@ public class PlayerCharacterController : MonoBehaviour
         {
             // rotate the transform with the input speed around its local Y axis
             transform.Rotate(new Vector3(0f, (m_InputHandler.GetLookInputsHorizontal() * rotationSpeed * RotationMultiplier), 0f), Space.Self);
+            //anim.SetFloat("Direction", m_InputHandler.GetLookInputsHorizontal() * rotationSpeed * RotationMultiplier);
         }
 
         // vertical camera rotation
@@ -251,6 +259,7 @@ public class PlayerCharacterController : MonoBehaviour
 
             // apply the vertical angle as a local rotation to the camera transform along its right axis (makes it pivot up and down)
             playerCamera.transform.localEulerAngles = new Vector3(m_CameraVerticalAngle, 0, 0);
+            anim.SetFloat("Speed", Input.GetAxisRaw(GameConstants.k_AxisNameVertical));
         }
 
         // character movement handling
@@ -258,10 +267,15 @@ public class PlayerCharacterController : MonoBehaviour
         {
             if (isSprinting)
             {
+                anim.SetBool("Run", true);
                 isSprinting = SetCrouchingState(false, false);
             }
-
-            float speedModifier = isSprinting ? sprintSpeedModifier : 1f;
+            else
+            {
+                anim.SetBool("Run", false);
+            }
+            
+            float speedModifier = isSprinting ? sprintSpeedModifier : 0.5f;
 
             // converts move input to a worldspace vector based on our character's transform orientation
             Vector3 worldspaceMoveInput = transform.TransformVector(m_InputHandler.GetMoveInput());
@@ -301,6 +315,7 @@ public class PlayerCharacterController : MonoBehaviour
                         // Force grounding to false
                         isGrounded = false;
                         m_GroundNormal = Vector3.up;
+                        anim.SetBool("Jump", true);
                     }
                 }
 

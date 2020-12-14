@@ -7,7 +7,6 @@ public class Damageable : MonoBehaviour
     [Range(0, 1)]
     [Tooltip("Multiplier to apply to self damage")]
     public float sensibilityToSelfdamage = 0.5f;
-
     public Health health { get; private set; }
 
     void Awake()
@@ -41,6 +40,8 @@ public class Damageable : MonoBehaviour
 
             // apply the damages
             health.TakeDamage(totalDamage, damageSource);
+
+            
         }
     }
 }

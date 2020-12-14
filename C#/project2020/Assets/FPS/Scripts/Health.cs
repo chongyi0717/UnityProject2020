@@ -20,10 +20,17 @@ public class Health : MonoBehaviour
     public bool isCritical() => getRatio() <= criticalHealthRatio;
 
     bool m_IsDead;
-
+    private Animator anim;
+    private Animator Zombie_anim;
+    public AudioClip HitSFX;
+    public AudioClip Zombie_HitSFX;
+    public AudioSource audioSource;
+    public AudioSource Zombie_audioSource;
     private void Start()
     {
         currentHealth = maxHealth;
+        anim = GetComponent<Animator>();
+        Zombie_anim = GetComponent<Animator>();
     }
 
     public void Heal(float healAmount)
@@ -42,9 +49,21 @@ public class Health : MonoBehaviour
 
     public void TakeDamage(float damage, GameObject damageSource)
     {
+        if (damageSource.tag != "Player")
+        {
+            anim.SetBool("Damaged", true);
+            audioSource.PlayOneShot(HitSFX);
+            //Debug.Log("hit");
+        }
+
+        if (damageSource.tag != "Zombie")
+        {
+            Zombie_anim.SetBool("Damaged", true);
+            Zombie_audioSource.PlayOneShot(Zombie_HitSFX);
+        }
         if (invincible)
             return;
-
+                   
         float healthBefore = currentHealth;
         currentHealth -= damage;
         currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
@@ -57,6 +76,7 @@ public class Health : MonoBehaviour
         }
 
         HandleDeath();
+        
     }
 
     public void Kill()

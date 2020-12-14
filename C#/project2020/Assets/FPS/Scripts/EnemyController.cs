@@ -114,9 +114,11 @@ public class EnemyController : MonoBehaviour
     WeaponController m_CurrentWeapon;
     WeaponController[] m_Weapons;
     NavigationModule m_NavigationModule;
+    private Animator anim;
 
     void Start()
     {
+        anim = GetComponent<Animator>();
         m_EnemyManager = FindObjectOfType<EnemyManager>();
         DebugUtility.HandleErrorIfNullFindObject<EnemyManager, EnemyController>(m_EnemyManager, this);
 
@@ -207,6 +209,8 @@ public class EnemyController : MonoBehaviour
         }
 
         m_WasDamagedThisFrame = false;
+        //anim.SetBool("Atk", false);
+        anim.SetBool("Damaged", false);
     }
 
     void EnsureIsWithinLevelBounds()
@@ -246,7 +250,7 @@ public class EnemyController : MonoBehaviour
     public void OrientTowards(Vector3 lookPosition)
     {
         Vector3 lookDirection = Vector3.ProjectOnPlane(lookPosition - transform.position, Vector3.up).normalized;
-        if (lookDirection.sqrMagnitude != 0f)
+        if (lookDirection.sqrMagnitude !=0f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(lookDirection);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * orientationSpeed);
@@ -397,6 +401,7 @@ public class EnemyController : MonoBehaviour
 
     public bool TryAtack(Vector3 enemyPosition)
     {
+        anim.SetBool("Atk", false);
         if (m_GameFlowManager.gameIsEnding)
             return false;
 
@@ -417,8 +422,9 @@ public class EnemyController : MonoBehaviour
                 int nextWeaponIndex = (m_CurrentWeaponIndex + 1) % m_Weapons.Length;
                 SetCurrentWeapon(nextWeaponIndex);
             }
+            anim.SetBool("Atk",true);
+            //Debug.Log("Atk");
         }
-
         return didFire;
     }
 

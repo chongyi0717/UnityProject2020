@@ -14,6 +14,7 @@ public class AmmoCounter : MonoBehaviour
     public Image ammoFillImage;
     [Tooltip("Text for image index")]
     public TMPro.TextMeshProUGUI weaponIndexText;
+
     [Header("Selection")]
     [Range(0, 1)]
     [Tooltip("Opacity when weapon not selected")]
@@ -30,7 +31,7 @@ public class AmmoCounter : MonoBehaviour
     public float ammoFillMovementSharpness = 20f;
 
     public int weaponCounterIndex { get; set; }
-    public BulletCount BulletCount;
+
     PlayerWeaponsManager m_PlayerWeaponsManager;
     WeaponController m_Weapon;
 
@@ -39,14 +40,13 @@ public class AmmoCounter : MonoBehaviour
         m_Weapon = weapon;
         weaponCounterIndex = weaponIndex;
         weaponImage.sprite = weapon.weaponIcon;
-        BulletCount = this.GetComponentInChildren<BulletCount>();
+
         m_PlayerWeaponsManager = FindObjectOfType<PlayerWeaponsManager>();
         DebugUtility.HandleErrorIfNullFindObject<PlayerWeaponsManager, AmmoCounter>(m_PlayerWeaponsManager, this);
 
         weaponIndexText.text = (weaponCounterIndex + 1).ToString();
 
         FillBarColorChange.Initialize(1f, m_Weapon.GetAmmoNeededToShoot());
-        BulletCount.Initialize(1f, m_Weapon.GetAmmoNeededToShoot());
     }
 
     void Update()
@@ -59,7 +59,7 @@ public class AmmoCounter : MonoBehaviour
         canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha , isActiveWeapon ? 1f : unselectedOpacity, Time.deltaTime * 10);
         transform.localScale = Vector3.Lerp(transform.localScale, isActiveWeapon ? Vector3.one : unselectedScale, Time.deltaTime * 10);
         controlKeysRoot.SetActive(!isActiveWeapon);
+
         FillBarColorChange.UpdateVisual(currenFillRatio);
-        BulletCount.UpdateVisual(currenFillRatio);
     }
 }

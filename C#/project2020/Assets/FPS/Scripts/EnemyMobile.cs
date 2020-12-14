@@ -56,6 +56,7 @@ public class EnemyMobile : MonoBehaviour
 
     void Update()
     {
+
         UpdateAIStateTransitions();
         UpdateCurrentAIState();
 
